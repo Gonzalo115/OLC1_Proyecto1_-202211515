@@ -1,18 +1,15 @@
 package Clases;
 
 public class Documento {
-    int id;
+
     String nombre;
     String ruta; 
+    String contenido;
 
-    public Documento(int id, String nombre, String ruta) {
-        this.id = id;
+    public Documento(String nombre, String ruta, String contenido) {
         this.nombre = nombre;
         this.ruta = ruta;
-    }
-
-    public int getId() {
-        return id;
+        this.contenido = contenido;
     }
 
     public String getNombre() {
@@ -23,8 +20,8 @@ public class Documento {
         return ruta;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getContenido() {
+        return contenido;
     }
 
     public void setNombre(String nombre) {
@@ -34,5 +31,11 @@ public class Documento {
     public void setRuta(String ruta) {
         this.ruta = ruta;
     }
+
+    public void setContenido(String contenido) {
+        this.contenido = contenido;
+    }
+
+    
     
 }
