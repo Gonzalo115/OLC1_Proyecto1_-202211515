@@ -282,7 +282,14 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_abrirActionPerformed
 
     private void cerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarActionPerformed
-        // TODO add your handling code here:
+        for(int i =0; i <AppState.pestañas.size(); i++){
+            Documento obj = AppState.pestañas.get(i);
+                if(obj.getRuta().equals(rutaGlobal)){
+                    AppState.pestañas.remove(i);
+                    CodigoTextArea.setText("");
+                    llenarPestañas();
+                }
+        }
     }//GEN-LAST:event_cerrarActionPerformed
 
     
