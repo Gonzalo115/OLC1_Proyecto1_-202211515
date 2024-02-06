@@ -32,6 +32,24 @@ public class Principal extends javax.swing.JFrame {
         this.setTitle("DATAFORGE");
         llenarPestañas();
         
+        
+        tablaPestañas.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                if (!evt.getValueIsAdjusting()) {
+                    int filaSeleccionada = tablaPestañas.getSelectedRow();
+
+                    if (filaSeleccionada >= 0) {
+                        actualizarContenido();
+                        String contenido = AppState.pestañas.get(filaSeleccionada).getContenido();
+                        CodigoTextArea.setText(contenido);
+
+                        rutaGlobal = AppState.pestañas.get(filaSeleccionada).getRuta();
+                    }
+                }
+            }
+        });
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -42,7 +60,6 @@ public class Principal extends javax.swing.JFrame {
         CodigoTextArea = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         tablaPestañas = new javax.swing.JTable();
-        cambiar = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         ConsolaTextArea = new javax.swing.JTextArea();
         menu = new javax.swing.JMenuBar();
@@ -74,13 +91,6 @@ public class Principal extends javax.swing.JFrame {
             }
         ));
         jScrollPane2.setViewportView(tablaPestañas);
-
-        cambiar.setText("Cabiar");
-        cambiar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cambiarActionPerformed(evt);
-            }
-        });
 
         ConsolaTextArea.setBackground(new java.awt.Color(51, 51, 51));
         ConsolaTextArea.setColumns(20);
@@ -162,9 +172,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cambiar, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 338, Short.MAX_VALUE)))
@@ -175,12 +183,8 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 3, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cambiar))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -288,17 +292,6 @@ public class Principal extends javax.swing.JFrame {
         System.out.println(rutaGlobal);
     }//GEN-LAST:event_ejecutarActionPerformed
 
-    private void cambiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cambiarActionPerformed
-        int filaSeleccionada = tablaPestañas.getSelectedRow();
-
-        if (filaSeleccionada >=0){
-            actualizarContenido();                
-            String contenido = AppState.pestañas.get(filaSeleccionada).getContenido();
-            CodigoTextArea.setText(contenido);
-            rutaGlobal = AppState.pestañas.get(filaSeleccionada).getRuta();  
-        }
-    }//GEN-LAST:event_cambiarActionPerformed
-
 
     public static void main(String args[]) {
 
@@ -333,7 +326,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTextArea ConsolaTextArea;
     private javax.swing.JMenuItem abrir;
     private javax.swing.JMenu archivo;
-    private javax.swing.JButton cambiar;
     private javax.swing.JMenuItem cerrar;
     private javax.swing.JMenuItem ejecutar;
     private javax.swing.JMenu ejecutarM;
