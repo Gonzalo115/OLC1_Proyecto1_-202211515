@@ -15,6 +15,8 @@ import javax.swing.table.TableModel;
 
 
 import Clases.Documento;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import olc.dataforge.AppState;
 
 public class Principal extends javax.swing.JFrame {
@@ -115,6 +117,11 @@ public class Principal extends javax.swing.JFrame {
 
         guardar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         guardar.setText("Guardar");
+        guardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarActionPerformed(evt);
+            }
+        });
         archivo.add(guardar);
 
         guardar_como.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -170,12 +177,12 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 802, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 338, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -288,6 +295,7 @@ public class Principal extends javax.swing.JFrame {
                     AppState.pestañas.remove(i);
                     CodigoTextArea.setText("");
                     llenarPestañas();
+                    rutaGlobal = "";
                 }
         }
     }//GEN-LAST:event_cerrarActionPerformed
@@ -298,6 +306,25 @@ public class Principal extends javax.swing.JFrame {
     private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
         System.out.println(rutaGlobal);
     }//GEN-LAST:event_ejecutarActionPerformed
+
+    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
+    
+        try {
+            String texto = CodigoTextArea.getText();
+            if (rutaGlobal != null && !rutaGlobal.isEmpty()) {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(rutaGlobal));
+                writer.write(texto);
+                writer.close();
+                JOptionPane.showMessageDialog(null, "Documento Actualizado!!!", "Información", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Para actualizar el archivo primero debe de existir", "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (IOException ex) {
+            // Manejar excepciones de entrada/salida (IOException)
+            ex.printStackTrace();
+        }
+        
+    }//GEN-LAST:event_guardarActionPerformed
 
 
     public static void main(String args[]) {
