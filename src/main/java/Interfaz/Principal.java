@@ -1,4 +1,3 @@
-
 package Interfaz;
 
 import java.io.File;
@@ -13,18 +12,17 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-
 import Clases.Documento;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import olc.dataforge.AppState;
 
 public class Principal extends javax.swing.JFrame {
 
     static private String rutaGlobal;
-            
-    
-    
+
     public Principal() {
         initComponents();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -33,8 +31,7 @@ public class Principal extends javax.swing.JFrame {
         this.setResizable(false);
         this.setTitle("DATAFORGE");
         llenarPestañas();
-        
-        
+
         tablaPestañas.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -51,7 +48,7 @@ public class Principal extends javax.swing.JFrame {
                 }
             }
         });
-        
+
     }
 
     @SuppressWarnings("unchecked")
@@ -69,7 +66,6 @@ public class Principal extends javax.swing.JFrame {
         nuevo = new javax.swing.JMenuItem();
         abrir = new javax.swing.JMenuItem();
         guardar = new javax.swing.JMenuItem();
-        guardar_como = new javax.swing.JMenuItem();
         cerrar = new javax.swing.JMenuItem();
         ejecutarM = new javax.swing.JMenu();
         ejecutar = new javax.swing.JMenuItem();
@@ -104,6 +100,11 @@ public class Principal extends javax.swing.JFrame {
 
         nuevo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         nuevo.setText("Nuevo");
+        nuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoActionPerformed(evt);
+            }
+        });
         archivo.add(nuevo);
 
         abrir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -123,10 +124,6 @@ public class Principal extends javax.swing.JFrame {
             }
         });
         archivo.add(guardar);
-
-        guardar_como.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        guardar_como.setText("Guardar Como");
-        archivo.add(guardar_como);
 
         cerrar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         cerrar.setText("Cerrar");
@@ -200,115 +197,111 @@ public class Principal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void llenarPestañas(){
-        
-       DefaultTableModel modeloDafault = new DefaultTableModel(new String[]{"Pestañas"},AppState.pestañas.size());
-       tablaPestañas.setModel(modeloDafault);
-       
-       TableModel modeloDatos = tablaPestañas.getModel();
-       for(int i =0; i <AppState.pestañas.size(); i++){
-           modeloDatos.setValueAt(AppState.pestañas.get(i).getNombre(),i,0);
-       }
-        
+    private void llenarPestañas() {
+
+        DefaultTableModel modeloDafault = new DefaultTableModel(new String[]{"Pestañas"}, AppState.pestañas.size());
+        tablaPestañas.setModel(modeloDafault);
+
+        TableModel modeloDatos = tablaPestañas.getModel();
+        for (int i = 0; i < AppState.pestañas.size(); i++) {
+            modeloDatos.setValueAt(AppState.pestañas.get(i).getNombre(), i, 0);
+        }
+
     }
-    
-    private void actualizarContenido(){
+
+    private void actualizarContenido() {
         //Antes de cualquier cambio actualizaremos el contenido para evitar guardar el documento en la memoria estatica y asi 
         //darle a el usuario la decision si quiere guardar los cambios...
-        for(int i =0; i <AppState.pestañas.size(); i++){
+        for (int i = 0; i < AppState.pestañas.size(); i++) {
             Documento obj = AppState.pestañas.get(i);
-            if(obj.getRuta().equals(rutaGlobal)){
+            if (obj.getRuta().equals(rutaGlobal)) {
                 String texto = CodigoTextArea.getText();
                 obj.setContenido(texto);
             }
         }
     }
-    
-    
+
+
     private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
         FileDialog fileDialog = new FileDialog((Frame) null);
-        fileDialog.setFilenameFilter((dir, name) -> name.endsWith(".txt"));
-
+        fileDialog.setFile("*.df");
         fileDialog.setVisible(true);
 
-        String nombreArchivo = fileDialog.getFile(); 
+        String nombreArchivo = fileDialog.getFile();
         String directorio = fileDialog.getDirectory();
         String rutaCompleta = directorio + nombreArchivo;
 
-        
-
         if (nombreArchivo != null) {
-            
+
             boolean encontrada = false;
-            
-            for(int i =0; i <AppState.pestañas.size(); i++){
-                String rutaExistente = AppState.pestañas.get(i).getRuta();
-                if(rutaExistente.equals(rutaCompleta)){
-                    encontrada = true;
-                    break;   
-                }
-            }
-            
-            if(encontrada == false){          
-                try {
-                    
-                    actualizarContenido(); 
-                    
-                    rutaGlobal = rutaCompleta;
-                    
-                    // Leer el contenido del archivo
-                    BufferedReader br = new BufferedReader(new FileReader(rutaCompleta));
-                    StringBuilder contenido = new StringBuilder();
 
-
-                    String linea;
-
-                    while ((linea = br.readLine()) != null) {
-                        contenido.append(linea).append("\n");
+            File archivo = new File(rutaCompleta);
+            if (archivo.exists()) {
+                for (int i = 0; i < AppState.pestañas.size(); i++) {
+                    String rutaExistente = AppState.pestañas.get(i).getRuta();
+                    if (rutaExistente.equals(rutaCompleta)) {
+                        encontrada = true;
+                        break;
                     }
-
-                    br.close();
-
-                    // Colocar el contenido en el TextArea
-                    CodigoTextArea.setText(contenido.toString());
-
-                    // Agragar a la lista de pestañas el documento abierto
-                    Documento documento = new Documento(nombreArchivo, rutaCompleta, contenido.toString());
-                    AppState.pestañas.add(documento); 
-
-                    llenarPestañas();
-
-
-                } catch (IOException ex) {
-                    ex.printStackTrace();
                 }
-            }else{
-                JOptionPane.showMessageDialog(null, "El archivo ya se encuentra abierto", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+                if (encontrada == false) {
+                    try {
+
+                        actualizarContenido();
+
+                        rutaGlobal = rutaCompleta;
+
+                        BufferedReader br = new BufferedReader(new FileReader(rutaCompleta));
+                        StringBuilder contenido = new StringBuilder();
+
+                        String linea;
+
+                        while ((linea = br.readLine()) != null) {
+                            contenido.append(linea).append("\n");
+                        }
+
+                        br.close();
+
+                        CodigoTextArea.setText(contenido.toString());
+
+                        Documento documento = new Documento(nombreArchivo, rutaCompleta, contenido.toString());
+                        AppState.pestañas.add(documento);
+
+                        llenarPestañas();
+
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "El archivo ya se encuentra abierto", "Información", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "La ruta especificada no existe", "Error", JOptionPane.ERROR_MESSAGE);
             }
+
         }
     }//GEN-LAST:event_abrirActionPerformed
 
     private void cerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarActionPerformed
-        for(int i =0; i <AppState.pestañas.size(); i++){
+        for (int i = 0; i < AppState.pestañas.size(); i++) {
             Documento obj = AppState.pestañas.get(i);
-                if(obj.getRuta().equals(rutaGlobal)){
-                    AppState.pestañas.remove(i);
-                    CodigoTextArea.setText("");
-                    llenarPestañas();
-                    rutaGlobal = "";
-                }
+            if (obj.getRuta().equals(rutaGlobal)) {
+                AppState.pestañas.remove(i);
+                CodigoTextArea.setText("");
+                llenarPestañas();
+                rutaGlobal = "";
+            }
         }
     }//GEN-LAST:event_cerrarActionPerformed
 
-    
 
-    
     private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
-        System.out.println(rutaGlobal);
+        System.out.println(rutaGlobal); 
     }//GEN-LAST:event_ejecutarActionPerformed
 
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
-    
+
         try {
             String texto = CodigoTextArea.getText();
             if (rutaGlobal != null && !rutaGlobal.isEmpty()) {
@@ -323,9 +316,52 @@ public class Principal extends javax.swing.JFrame {
             // Manejar excepciones de entrada/salida (IOException)
             ex.printStackTrace();
         }
-        
+
     }//GEN-LAST:event_guardarActionPerformed
 
+    private void nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoActionPerformed
+
+        FileDialog fileDialog = new FileDialog((Frame) null, "Nuevo", FileDialog.SAVE);
+        fileDialog.setFile("*.df");
+        fileDialog.setVisible(true);
+
+        String nombreArchivo = fileDialog.getFile();
+        String directorio = fileDialog.getDirectory();
+
+        if (nombreArchivo != null) {
+            String rutaCompleta = directorio + nombreArchivo;
+            boolean encontrada = false;
+
+            for (int i = 0; i < AppState.pestañas.size(); i++) {
+                String rutaExistente = AppState.pestañas.get(i).getRuta();
+                if (rutaExistente.equals(rutaCompleta)) {
+                    encontrada = true;
+                    break;
+                }
+            }
+
+            if (!encontrada) {
+                try {
+                    actualizarContenido();
+                    rutaGlobal = rutaCompleta;
+                    File nuevoArchivo = new File(rutaCompleta);
+
+                    if (nuevoArchivo.createNewFile()) {
+                        CodigoTextArea.setText("");
+                        Documento documento = new Documento(nombreArchivo, rutaCompleta, "");
+                        AppState.pestañas.add(documento);
+                        llenarPestañas();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al crear el archivo", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "El archivo ya existe en el directorio", "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_nuevoActionPerformed
 
     public static void main(String args[]) {
 
@@ -364,7 +400,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem ejecutar;
     private javax.swing.JMenu ejecutarM;
     private javax.swing.JMenuItem guardar;
-    private javax.swing.JMenuItem guardar_como;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
